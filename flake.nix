@@ -12,40 +12,52 @@
     eachDefaultSystem = eachSystem systems;
   in {
     # Export the library for use in other flakes
-    lib = eachDefaultSystem (system: let
-      pkgs = import inputs.nixpkgs {inherit system;};
-      std = inputs.nix-std.lib;
-    in
-      import ./lib {inherit pkgs system std;});
+    lib = eachDefaultSystem (
+      system: let
+        pkgs = import inputs.nixpkgs {inherit system;};
+        std = inputs.nix-std.lib;
+      in
+        import ./lib {inherit pkgs system std;}
+    );
 
     # Formatter for this project
     formatter = eachDefaultSystem (system: inputs.nixpkgs.legacyPackages.${system}.alejandra);
 
     # Development shell for working on the library itself
-    devShells = eachDefaultSystem (system: let
-      pkgs = import inputs.nixpkgs {inherit system;};
-      devLib = import ./lib {
-        inherit pkgs system;
-        std = inputs.nix-std.lib;
-      };
-    in {
-      default = devLib.mkDevShell {
-        name = "dev-library";
-        lang.nix.enable = true;
-        editor.helix.enable = true;
-        packages = with pkgs; [
-          statix
-          deadnix
-          nix-tree
-          nix-diff
-        ];
-        shellHook = ''
-          echo "Dev Library development environment"
-          echo "Use 'alejandra .' to format nix files"
-          echo "Use 'statix check .' to lint nix files"
-          echo "Use 'deadnix .' to find dead code"
-        '';
-      };
-    });
+    devShells = eachDefaultSystem (
+      system: let
+        pkgs = import inputs.nixpkgs {inherit system;};
+        devLib = import ./lib {
+          inherit pkgs system;
+          std = inputs.nix-std.lib;
+        };
+      in {
+        default = devLib.mkDevShell {
+          name = "dev-library";
+          lang.nix.enable = true;
+          editor.helix.enable = true;
+          packages = with pkgs; [
+            # Additional development tools
+            statix
+            deadnix
+            # Documentation and exploration
+            manix
+            # Flake management
+            flake-checker
+          ];
+          env = {
+            NIXD_FLAGS = "--semantic-tokens";
+          };
+          shellHook = ''
+            mkdir -p .logs
+            export NIX_LOG_DIR="$PDW/.logs"
+            echo "Dev Library development environment"
+            echo "Use 'alejandra .' to format nix files"
+            echo "Use 'statix check .' to lint nix files"
+            echo "Use 'deadnix .' to find dead code"
+          '';
+        };
+      }
+    );
   };
 }

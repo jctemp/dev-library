@@ -17,7 +17,7 @@
       "telemetry.telemetryLevel" = "off";
     };
 
-    # Collect all settings from language configurations
+    # Collect settings from language configurations
     allSettings =
       std.list.foldl' (
         acc: langConfig:
@@ -28,7 +28,7 @@
       baseSettings
       langConfigs;
 
-    # Helper function to extract extension ID from package
+    # Helper to extract extension ID from package
     extractExtensionId = ext:
       if std.set.getOr false "vscodeExtUniqueId" ext
       then ext.vscodeExtUniqueId
@@ -42,7 +42,7 @@
       "catppuccin.catppuccin-vsc-icons"
     ];
 
-    # Collect all extensions from language configurations
+    # Collect extensions from language configurations
     langExtensions =
       std.list.concatMap (
         langConfig:
@@ -63,18 +63,18 @@
         # Generate VSCode configuration
         mkdir -p .vscode
 
-        # Generate settings.json using nix-std's toJSON
+        # Generate settings.json
         cat > .vscode/settings.json << 'EOF'
     ${std.serde.toJSON allSettings}
     EOF
 
-        # Generate extensions.json using nix-std's toJSON
+        # Generate extensions.json
         cat > .vscode/extensions.json << 'EOF'
     ${std.serde.toJSON extensionsConfig}
     EOF
 
         echo "Generated VSCode configuration in .vscode/"
-        echo "Install recommended extensions by opening VSCode and running:"
-        echo "  Ctrl+Shift+P → 'Extensions: Show Recommended Extensions'"
+        echo "Language servers will be auto-discovered from PATH"
+        echo "Install recommended extensions via Command Palette: 'Extensions: Show Recommended Extensions'"
   '';
 }
