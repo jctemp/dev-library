@@ -95,8 +95,8 @@
                   else {}
               '';
             };
-            # Dev-library options (for this project)
-            dev-library = {
+            # The current project
+            nixell = {
               expr = ''
                 let
                   flake = builtins.getFlake (toString ./.);

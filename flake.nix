@@ -33,8 +33,11 @@
         };
       in {
         default = devLib.mkDevShell {
-          name = "dev-library";
-          lang.nix.enable = true;
+          name = "nixell-dev";
+          lang = {
+            nix.enable = true;
+            markdown.enable = true;
+          };
           editor.helix.enable = true;
           packages = with pkgs; [
             # Additional development tools
