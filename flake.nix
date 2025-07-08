@@ -23,6 +23,18 @@
     # Formatter for this project
     formatter = eachDefaultSystem (system: inputs.nixpkgs.legacyPackages.${system}.alejandra);
 
+    # Basic templates for quick project setup
+    templates = {
+      default = {
+        path = ./templates/native;
+        description = "A basic project setup for developing transparently";
+      };
+      fhs = {
+        path = ./templates/fhs;
+        description = "A basic project setup for developing in a fhs environment";
+      };
+    };
+
     # Development shell for working on the library itself
     devShells = eachDefaultSystem (
       system: let

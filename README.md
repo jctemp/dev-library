@@ -9,7 +9,7 @@ nixell makes it trivial to create consistent, reproducible development environme
 - **Zero Config**: Sensible defaults with automatic tool discovery
 - **Lightweight**: Only includes what you enable
 
-## 🏃 Quick Start
+## Quick Start
 
 ### 1. Add nixell to your flake
 
